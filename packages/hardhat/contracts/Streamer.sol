@@ -11,6 +11,8 @@ contract Streamer is Ownable {
   event Closed(address);
 
   error ChannelAlreadyCreated();
+  error NotEnoughBalance();
+  error FailToSendETH();
 
   mapping(address => uint256) public balances;
   mapping(address => uint256) public canCloseAt;
@@ -38,7 +40,7 @@ contract Streamer is Ownable {
     return canCloseAt[channel] - block.timestamp;
   }
 
-  function withdrawEarnings(Voucher calldata voucher) public {
+  function withdrawEarnings(Voucher calldata voucher) onlyOwner() public {
     // like the off-chain code, signatures are applied to the hash of the data
     // instead of the raw data itself
     bytes32 hashed = keccak256(abi.encode(voucher.updatedBalance));
@@ -65,6 +67,15 @@ contract Streamer is Ownable {
           - adjust the channel balance, and pay the Guru(Contract owner). Get the owner address with the `owner()` function.
           - emit the Withdrawn event
     */
+    address rubeAddress = ecrecover(prefixedHashed, voucher.sig.v, voucher.sig.r, voucher.sig.s);
+    // console.log("recovered address is: ", rubeAddress);
+    uint256 signerBalance = balances[rubeAddress];
+    if (signerBalance < voucher.updatedBalance ) revert NotEnoughBalance();
+    uint256 payment = signerBalance - voucher.updatedBalance; 
+    balances[rubeAddress] = voucher.updatedBalance;
+    (bool success, ) = owner().call{value: payment}("");
+    if (!success ) revert FailToSendETH();
+    emit Withdrawn(rubeAddress, payment);
   }
 
   /*
