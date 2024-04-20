@@ -134,20 +134,23 @@ const Streamer: NextPage = () => {
       const hashed = keccak256(packed);
       const arrayified = toBytes(hashed);
 
-      // try {
-      const valid = await verifyMessage({
-        address: clientAddress,
-        message: { raw: hashed },
-        signature: data.signature,
-      });
-      console.log(`from processVoucher hashed: ${hashed}`);
-      console.log(`from processVoucher arrayified: ${arrayified}`);
-      console.log(`from processVoucher data.updatedBalance: ${data.updatedBalance}`);
+      try {
+        const valid = await verifyMessage({
+          address: clientAddress,
+          message: { raw: hashed },
+          signature: data.signature,
+        });
+        // console.log(`from processVoucher hashed: ${hashed}`);
+        // console.log(`from processVoucher arrayified: ${arrayified}`);
+        console.log(`from processVoucher data.updatedBalance: ${data.updatedBalance}`);
 
-      console.log(`Is the signature valid?: ${valid}`);
-      // } catch (error) {
-      //   console.error("Voucher incorrectly signed", error);
-      // }
+        console.log(`Is the signature valid?: ${valid}`);
+        if (!valid) {
+          alert(`Signature not valid`);
+        }
+      } catch (error) {
+        console.error("Error trying to validate", error);
+      }
 
       const existingVoucher = vouchers[clientAddress];
 
@@ -222,8 +225,20 @@ const Streamer: NextPage = () => {
   }, [userAddress]);
 
   const provideService = (client: AddressType, wisdom: string) => {
+    //const hexDuePayment = duePayment.toString(16);
+
     setWisdoms({ ...wisdoms, [client]: wisdom });
     channels[client]?.postMessage(wisdom);
+
+    const costPerCharacter = parseEther(ETH_PER_CHARACTER);
+    const duePayment = costPerCharacter * BigInt(wisdom.length);
+    const existingVoucher = vouchers[client];
+    console.log(`${duePayment},${existingVoucher.updatedBalance}`);
+
+    if (existingVoucher.updatedBalance == 0n) {
+      alert(`Rube cant pay for wisdom anymore`);
+      return;
+    }
   };
 
   const [vouchers, setVouchers] = useState<{ [key: AddressType]: Voucher }>({});
@@ -266,8 +281,8 @@ const Streamer: NextPage = () => {
     const hashed = keccak256(packed);
     const arrayified = toBytes(hashed);
 
-    console.log(`from reimburseService hashed: ${hashed}`);
-    console.log(`from reimburseService arrayified: ${arrayified}`);
+    // console.log(`from reimburseService hashed: ${hashed}`);
+    // console.log(`from reimburseService arrayified: ${arrayified}`);
 
     // Why not just sign the updatedBalance string directly?
     //
