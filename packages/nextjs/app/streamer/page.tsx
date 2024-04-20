@@ -236,7 +236,8 @@ const Streamer: NextPage = () => {
     console.log(`${duePayment},${existingVoucher.updatedBalance}`);
 
     if (existingVoucher.updatedBalance == 0n) {
-      alert(`Rube cant pay for wisdom anymore`);
+      alert(`Rube can't pay for wisdom anymore.
+You still can send wisdom 1 character at a time.`);
       return;
     }
   };
