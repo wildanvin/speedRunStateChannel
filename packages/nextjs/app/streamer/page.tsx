@@ -129,6 +129,26 @@ const Streamer: NextPage = () => {
        *  and then use verifyMessage() to confirm that voucher signer was
        *  `clientAddress`. (If it wasn't, log some error message and return).
        */
+
+      const packed = encodePacked(["uint256"], [updatedBalance]);
+      const hashed = keccak256(packed);
+      const arrayified = toBytes(hashed);
+
+      // try {
+      const valid = await verifyMessage({
+        address: clientAddress,
+        message: { raw: hashed },
+        signature: data.signature,
+      });
+      console.log(`from processVoucher hashed: ${hashed}`);
+      console.log(`from processVoucher arrayified: ${arrayified}`);
+      console.log(`from processVoucher data.updatedBalance: ${data.updatedBalance}`);
+
+      console.log(`Is the signature valid?: ${valid}`);
+      // } catch (error) {
+      //   console.error("Voucher incorrectly signed", error);
+      // }
+
       const existingVoucher = vouchers[clientAddress];
 
       // update our stored voucher if this new one is more valuable
@@ -246,6 +266,9 @@ const Streamer: NextPage = () => {
     const hashed = keccak256(packed);
     const arrayified = toBytes(hashed);
 
+    console.log(`from reimburseService hashed: ${hashed}`);
+    console.log(`from reimburseService arrayified: ${arrayified}`);
+
     // Why not just sign the updatedBalance string directly?
     //
     // Two considerations:
@@ -348,13 +371,13 @@ const Streamer: NextPage = () => {
                     </div>
 
                     {/* Checkpoint 4: */}
-                    {/* <CashOutVoucherButton
+                    <CashOutVoucherButton
                       key={clientAddress}
                       clientAddress={clientAddress}
                       challenged={challenged}
                       closed={closed}
                       voucher={vouchers[clientAddress]}
-                    /> */}
+                    />
                   </div>
                 ))}
               </div>

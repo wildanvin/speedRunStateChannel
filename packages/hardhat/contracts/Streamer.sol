@@ -10,8 +10,10 @@ contract Streamer is Ownable {
   event Withdrawn(address, uint256);
   event Closed(address);
 
-  mapping(address => uint256) balances;
-  mapping(address => uint256) canCloseAt;
+  error ChannelAlreadyCreated();
+
+  mapping(address => uint256) public balances;
+  mapping(address => uint256) public canCloseAt;
 
   function fundChannel() public payable {
     /*
@@ -22,6 +24,10 @@ contract Streamer is Ownable {
       - updates the balances mapping with the eth received in the function call
       - emits an Opened event
     */
+
+    if (balances[msg.sender] != 0) revert ChannelAlreadyCreated();
+    balances[msg.sender] = msg.value;
+    emit Opened (msg.sender, msg.value);
   }
 
   function timeLeft(address channel) public view returns (uint256) {
