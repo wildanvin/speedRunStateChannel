@@ -250,6 +250,11 @@ You still can send wisdom 1 character at a time.`);
     value: parseEther(STREAM_ETH_VALUE),
   });
 
+  const { writeAsync: beOwner } = useScaffoldContractWrite({
+    contractName: "Streamer",
+    functionName: "beOwner",
+  });
+
   // Checkpoint 5
   const { writeAsync: challengeChannel } = useScaffoldContractWrite({
     contractName: "Streamer",
@@ -402,6 +407,11 @@ You still can send wisdom 1 character at a time.`);
             // UI for the service consumer
             <>
               <p className="block text-2xl mt-0 mb-2 font-semibold">Hello Rube!</p>
+              <div className="p-2">
+                <button className="btn btn-primary" onClick={wrapInTryCatch(beOwner, "beOwner")}>
+                  Be the owner!
+                </button>
+              </div>
 
               {userAddress && writableChannels.includes(userAddress) ? (
                 <div className="w-full flex flex-col items-center">

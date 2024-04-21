@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Streamer: {
-      address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+      address: "0xc5a5C42992dECbae36851359345FE25997F5C42d",
       abi: [
         {
           inputs: [],
@@ -37,6 +37,11 @@ const deployedContracts = {
         {
           inputs: [],
           name: "NotTimeYet",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "RedundantWithdrawal",
           type: "error",
         },
         {
@@ -139,6 +144,303 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "beOwner",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "canCloseAt",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "challengeChannel",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "defundChannel",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "fundChannel",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "renounceOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "channel",
+              type: "address",
+            },
+          ],
+          name: "timeLeft",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "updatedBalance",
+                  type: "uint256",
+                },
+                {
+                  components: [
+                    {
+                      internalType: "bytes32",
+                      name: "r",
+                      type: "bytes32",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "s",
+                      type: "bytes32",
+                    },
+                    {
+                      internalType: "uint8",
+                      name: "v",
+                      type: "uint8",
+                    },
+                  ],
+                  internalType: "struct Streamer.Signature",
+                  name: "sig",
+                  type: "tuple",
+                },
+              ],
+              internalType: "struct Streamer.Voucher",
+              name: "voucher",
+              type: "tuple",
+            },
+          ],
+          name: "withdrawEarnings",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        owner: "@openzeppelin/contracts/access/Ownable.sol",
+        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+      },
+    },
+  },
+  11155111: {
+    Streamer: {
+      address: "0x74a5ccf5Ad72779D137184Dc45F5dA618f715237",
+      abi: [
+        {
+          inputs: [],
+          name: "ChannelAlreadyCreated",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailToSendETH",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NoChannel",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NoClosingChannel",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotEnoughBalance",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotTimeYet",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "RedundantWithdrawal",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "Challenged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "Closed",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "Opened",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "previousOwner",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "Withdrawn",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "balances",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "beOwner",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {

