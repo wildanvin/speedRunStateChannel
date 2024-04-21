@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Streamer: {
-      address: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+      address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
       abi: [
         {
           inputs: [],
@@ -21,7 +21,22 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "NoChannel",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NoClosingChannel",
+          type: "error",
+        },
+        {
+          inputs: [],
           name: "NotEnoughBalance",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotTimeYet",
           type: "error",
         },
         {
@@ -143,6 +158,20 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "challengeChannel",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "defundChannel",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {

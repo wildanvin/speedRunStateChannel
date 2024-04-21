@@ -101,14 +101,14 @@ const Streamer: NextPage = () => {
 
   if (userIsOwner) {
     Object.keys(channels)?.forEach(clientAddress => {
-      channels[clientAddress].onmessage = recieveVoucher(clientAddress);
+      channels[clientAddress].onmessage = receiveVoucher(clientAddress);
     });
   }
 
   /**
    * wraps a voucher processing function for each client.
    */
-  function recieveVoucher(clientAddress: string) {
+  function receiveVoucher(clientAddress: string) {
     /**
      * Handle incoming payments from the given client.
      */
@@ -123,7 +123,7 @@ const Streamer: NextPage = () => {
       /*
        *  Checkpoint 3:
        *
-       *  currently, this function recieves and stores vouchers uncritically.
+       *  currently, this function receives and stores vouchers uncritically.
        *
        *  recreate the packed, hashed, and arrayified message from reimburseService (above),
        *  and then use verifyMessage() to confirm that voucher signer was
@@ -233,7 +233,7 @@ const Streamer: NextPage = () => {
     const costPerCharacter = parseEther(ETH_PER_CHARACTER);
     const duePayment = costPerCharacter * BigInt(wisdom.length);
     const existingVoucher = vouchers[client];
-    console.log(`${duePayment},${existingVoucher.updatedBalance}`);
+    //console.log(`${duePayment},${existingVoucher.updatedBalance}`);
 
     if (existingVoucher.updatedBalance == 0n) {
       alert(`Rube can't pay for wisdom anymore.
@@ -251,20 +251,20 @@ You still can send wisdom 1 character at a time.`);
   });
 
   // Checkpoint 5
-  // const { writeAsync: challengeChannel } = useScaffoldContractWrite({
-  //   contractName: "Streamer",
-  //   functionName: "challengeChannel",
-  // });
+  const { writeAsync: challengeChannel } = useScaffoldContractWrite({
+    contractName: "Streamer",
+    functionName: "challengeChannel",
+  });
 
-  // const { writeAsync: defundChannel } = useScaffoldContractWrite({
-  //   contractName: "Streamer",
-  //   functionName: "defundChannel",
-  // });
+  const { writeAsync: defundChannel } = useScaffoldContractWrite({
+    contractName: "Streamer",
+    functionName: "defundChannel",
+  });
 
-  const [recievedWisdom, setReceivedWisdom] = useState("");
+  const [receivedWisdom, setReceivedWisdom] = useState("");
 
   /**
-   * reimburseService prepares, signs, and delivers a voucher that pays for the recieved wisdom
+   * reimburseService prepares, signs, and delivers a voucher that pays for the received wisdom
    * to the service provider
    */
   async function reimburseService(wisdom: string) {
@@ -324,7 +324,7 @@ You still can send wisdom 1 character at a time.`);
      */
     userChannel.current.onmessage = e => {
       if (typeof e.data != "string") {
-        console.warn(`recieved unexpected channel data: ${JSON.stringify(e.data)}`);
+        console.warn(`received unexpected channel data: ${JSON.stringify(e.data)}`);
         return;
       }
 
@@ -376,7 +376,7 @@ You still can send wisdom 1 character at a time.`);
                         Served: <strong>{wisdoms[clientAddress]?.length || 0}</strong>&nbsp;chars
                       </div>
                       <div>
-                        Recieved:{" "}
+                        Received:{" "}
                         <strong id={`claimable-${clientAddress}`}>
                           {vouchers[clientAddress]
                             ? formatEther(parseEther(STREAM_ETH_VALUE) - vouchers[clientAddress].updatedBalance)
@@ -417,7 +417,7 @@ You still can send wisdom 1 character at a time.`);
                         setAutoPay(updatedAutoPay);
 
                         if (updatedAutoPay) {
-                          reimburseService(recievedWisdom);
+                          reimburseService(receivedWisdom);
                         }
                       }}
                     />
@@ -426,11 +426,11 @@ You still can send wisdom 1 character at a time.`);
 
                   <div className="text-center w-full mt-4">
                     <p className="text-xl font-semibold">Received Wisdom</p>
-                    <p className="mb-3 text-lg min-h-[1.75rem] border-2 border-primary rounded">{recievedWisdom}</p>
+                    <p className="mb-3 text-lg min-h-[1.75rem] border-2 border-primary rounded">{receivedWisdom}</p>
                   </div>
 
                   {/* Checkpoint 5: challenge & closure */}
-                  {/* <div className="flex flex-col items-center pb-6">
+                  <div className="flex flex-col items-center pb-6">
                     <button
                       disabled={challenged.includes(userAddress)}
                       className="btn btn-primary"
@@ -469,7 +469,7 @@ You still can send wisdom 1 character at a time.`);
                     >
                       Close and withdraw funds
                     </button>
-                    </div> */}
+                  </div>
                 </div>
               ) : userAddress && closed.includes(userAddress) ? (
                 <div className="text-lg">

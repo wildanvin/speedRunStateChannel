@@ -13,6 +13,10 @@ contract Streamer is Ownable {
   error ChannelAlreadyCreated();
   error NotEnoughBalance();
   error FailToSendETH();
+  error NoChannel();
+  error NoClosingChannel();
+  error NotTimeYet();
+  error RedundantWithdrawal();
 
   mapping(address => uint256) public balances;
   mapping(address => uint256) public canCloseAt;
@@ -70,6 +74,10 @@ contract Streamer is Ownable {
     address rubeAddress = ecrecover(prefixedHashed, voucher.sig.v, voucher.sig.r, voucher.sig.s);
     // console.log("recovered address is: ", rubeAddress);
     uint256 signerBalance = balances[rubeAddress];
+
+    // Additional check to prevent redundant withdrawals
+    if (signerBalance == voucher.updatedBalance) revert RedundantWithdrawal();
+
     if (signerBalance < voucher.updatedBalance ) revert NotEnoughBalance();
     uint256 payment = signerBalance - voucher.updatedBalance; 
     balances[rubeAddress] = voucher.updatedBalance;
@@ -87,6 +95,11 @@ contract Streamer is Ownable {
     - emits a Challenged event
   */
 
+  function challengeChannel() public {
+    if (balances[msg.sender] == 0) revert NoChannel();
+    canCloseAt[msg.sender] = block.timestamp + 30 seconds; 
+    emit Challenged(msg.sender);
+  }
   /*
     Checkpoint 5b: Close the channel
 
@@ -96,6 +109,16 @@ contract Streamer is Ownable {
     - sends the channel's remaining funds to msg.sender, and sets the balance to 0
     - emits the Closed event
   */
+
+ function defundChannel() public {
+  if (canCloseAt[msg.sender] == 0) revert NoClosingChannel();
+  if (block.timestamp <= canCloseAt[msg.sender])  revert NotTimeYet();
+  uint256 payment = balances[msg.sender];
+  balances[msg.sender] = 0;
+  (bool success,) = msg.sender.call{value: payment}("");
+  if (!success ) revert FailToSendETH();
+  emit Closed(msg.sender);
+ }
 
   struct Voucher {
     uint256 updatedBalance;
